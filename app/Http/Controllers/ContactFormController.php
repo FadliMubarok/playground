@@ -20,30 +20,32 @@ class ContactFormController extends Controller
 
     public function store(\App\Http\Requests\ContactForm\Store $request)
     {
-        // Query Builder
-        DB::table('contact_forms')->insert([
-            'name' => $request->name,
-            'email' => $request->email,
-            'handphone' => $request->handphone,
-            'kategori' => $request->kategori,
-            'message' => $request->message,
-        ]);
+        // // Query Builder
+        // DB::table('contact_forms')->insert([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'handphone' => $request->handphone,
+        //     'kategori' => $request->kategori,
+        //     'message' => $request->message,
+        // ]);
 
-        DB::table('contact_forms')->insert($request->only(['name', 'email', 'handphone', 'kategori', 'message']));
-        DB::table('contact_forms')->insert($request->except(['_token']));
-        DB::table('contact_forms')->insert($request->validated());
+        // DB::table('contact_forms')->insert($request->only(['name', 'email', 'handphone', 'kategori', 'message']));
+        // DB::table('contact_forms')->insert($request->except(['_token']));
+        // DB::table('contact_forms')->insert($request->validated());
 
-        // Model Instance
-        $contactForm = new ContactForm();
-        $contactForm->name = $request->name;
-        $contactForm->email = $request->email;
-        $contactForm->handphone = $request->handphone;
-        $contactForm->kategori = $request->kategori;
-        $contactForm->message = $request->message;
-        $contactForm->save();
+        // // Model Instance
+        // $contactForm = new ContactForm();
+        // $contactForm->name = $request->name;
+        // $contactForm->email = $request->email;
+        // $contactForm->handphone = $request->handphone;
+        // $contactForm->kategori = $request->kategori;
+        // $contactForm->message = $request->message;
+        // $contactForm->save();
 
         //Mass Assignment
-        ContactForm::create($request->validated());
+        $contactForm = ContactForm::create($request->validated());
+
+        event(new \App\Events\ContactFormSubmitted($contactForm));
 
         return redirect()->back()->withSuccess('Pesan telah diterima dan menunggu tindak lanjut.');
     }
